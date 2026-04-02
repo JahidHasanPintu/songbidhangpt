@@ -1,50 +1,71 @@
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from app.config import settings
 from app.utils.logger import get_logger
+import importlib.metadata
 
 logger = get_logger(__name__)
 
 _embeddings = None
 
 
+def _get_package_version(package: str) -> tuple:
+    try:
+        version_str = importlib.metadata.version(package)
+        parts = version_str.split(".")
+        return tuple(int(x) for x in parts[:2])
+    except Exception:
+        return (0, 0)
+
+
+def _resolve_model_name(model: str) -> str:
+    """
+    langchain-google-genai < 4.0.0  → needs 'models/text-embedding-004'
+    langchain-google-genai >= 4.0.0 → needs 'gemini-embedding-001'
+    """
+    major, _ = _get_package_version("langchain-google-genai")
+    logger.info(f"  langchain-google-genai major version: {major}")
+
+    if major >= 4:
+        resolved = "gemini-embedding-001"
+        logger.info(f"  v4+ detected → overriding model to '{resolved}'")
+    else:
+        # Ensure models/ prefix for older versions
+        if not model.startswith("models/"):
+            resolved = f"models/{model}"
+        else:
+            resolved = model
+        logger.info(f"  v3 detected → using model '{resolved}'")
+
+    return resolved
+
+
 def get_embeddings() -> GoogleGenerativeAIEmbeddings:
     global _embeddings
     if _embeddings is None:
-        logger.info("="*50)
+        logger.info("=" * 50)
         logger.info("Initializing embedding model...")
-        logger.info(f"  Model name   : '{settings.EMBEDDING_MODEL}'")
-        logger.info(f"  API key set  : {'YES' if settings.GOOGLE_API_KEY else 'NO'}")
-        logger.info(f"  API key prefix: '{settings.GOOGLE_API_KEY[:8]}...'")
+        logger.info(f"  Model in config  : '{settings.EMBEDDING_MODEL}'")
+        logger.info(f"  API key set      : {'YES' if settings.GOOGLE_API_KEY else 'NO'}")
+        logger.info(f"  API key prefix   : '{settings.GOOGLE_API_KEY[:8]}...'")
+
+        resolved_model = _resolve_model_name(settings.EMBEDDING_MODEL)
+        logger.info(f"  Resolved model   : '{resolved_model}'")
+
         try:
             _embeddings = GoogleGenerativeAIEmbeddings(
-                model=settings.EMBEDDING_MODEL,
+                model=resolved_model,
                 google_api_key=settings.GOOGLE_API_KEY,
             )
-            logger.info("  Embedding model initialized OK")
-
-            # Test with a single string immediately
-            logger.info("  Running test embed on single string...")
+            logger.info("  Instance created OK — running test embed...")
             test_result = _embeddings.embed_query("test")
-            logger.info(f"  Test embed OK — vector size: {len(test_result)}")
+            logger.info(f"  Test embed OK — vector dimensions: {len(test_result)}")
         except Exception as e:
-            logger.error(f"  FAILED to initialize embeddings: {type(e).__name__}: {e}")
+            logger.error(f"  FAILED: {type(e).__name__}: {e}")
+            _embeddings = None
             raise
-        logger.info("="*50)
+
+        logger.info("=" * 50)
     else:
         logger.info("Reusing existing embedding instance")
+
     return _embeddings
-
-
-def embed_texts_debug(texts: list) -> list:
-    """Debug helper — embeds a small list and logs everything."""
-    logger.info(f"embed_texts_debug: embedding {len(texts)} text(s)")
-    emb = get_embeddings()
-    for i, t in enumerate(texts):
-        logger.info(f"  [{i}] length={len(t)}, preview='{t[:60].strip()}'")
-    try:
-        results = emb.embed_documents(texts)
-        logger.info(f"  embed_documents returned {len(results)} vectors")
-        return results
-    except Exception as e:
-        logger.error(f"  embed_documents FAILED: {type(e).__name__}: {e}")
-        raise
