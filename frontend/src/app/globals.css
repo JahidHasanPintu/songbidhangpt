@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap');
+
+:root {
+  --green: #006A4E;
+  --red: #F42A41;
+  --gold: #D4AF37;
+  --bg: #0F1117;
+  --surface: #1A1D27;
+  --border: #2A2D3A;
+  --text: #E8EAF0;
+  --muted: #8B8FA8;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Hind Siliguri', sans-serif;
+}
+
+.bangla-text {
+  font-family: 'Noto Serif Bengali', serif;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.prose-custom p { margin-bottom: 0.75rem; line-height: 1.8; }
+.prose-custom strong { color: var(--gold); }
