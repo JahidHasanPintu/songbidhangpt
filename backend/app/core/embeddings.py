@@ -11,4 +11,5 @@ def get_embeddings():
     return GoogleGenerativeAIEmbeddings(
         model=settings.EMBEDDING_MODEL,
         google_api_key=settings.GOOGLE_API_KEY,
+        task_type="retrieval_document",
     )

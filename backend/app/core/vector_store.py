@@ -1,11 +1,13 @@
 import chromadb
 from langchain_chroma import Chroma
 from langchain.schema import Document
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from app.config import settings
 from app.core.embeddings import get_embeddings
 from app.utils.logger import get_logger
 from typing import List, Tuple
 import os
+
 
 logger = get_logger(__name__)
 
@@ -34,13 +36,19 @@ class VectorStore:
         logger.info(f"Added {len(documents)} chunks to vector store")
         return len(documents)
 
-    def similarity_search(
-        self, query: str, k: int = None
-    ) -> List[Tuple[Document, float]]:
+    def similarity_search(self, query: str, k: int = None) -> List[Tuple[Document, float]]:
         """Search for similar documents."""
         k = k or settings.TOP_K_RESULTS
         store = self._get_store()
-        results = store.similarity_search_with_relevance_scores(query, k=k)
+        # Use query task type for search
+        results = store.similarity_search_with_relevance_scores(
+            query, k=k,
+            embedding=GoogleGenerativeAIEmbeddings(
+                model=settings.EMBEDDING_MODEL,
+                google_api_key=settings.GOOGLE_API_KEY,
+                task_type="retrieval_query",
+            )
+        )
         return results
 
     def get_count(self) -> int:
