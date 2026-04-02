@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: songbidhangpt-backend
+    restart: unless-stopped
+    env_file: ./backend/.env
+    volumes:
+      - ./backend/data:/app/data   # Persists ChromaDB + PDFs
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: songbidhangpt-frontend
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: songbidhangpt-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
