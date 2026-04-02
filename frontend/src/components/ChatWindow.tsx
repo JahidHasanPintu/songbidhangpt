@@ -176,7 +176,7 @@ export function ChatWindow() {
           </button>
         </div>
         <p className="text-center text-xs text-[var(--muted)] mt-2">
-          SongbidhanGPT — Open Source · Powered by Google Gemini
+          SongbidhanGPT — Open Source · Developed by <a href="">Pintu</a>
         </p>
       </div>
     </div>
