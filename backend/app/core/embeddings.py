@@ -4,12 +4,14 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+_embeddings = None
 
-def get_embeddings():
-    """Returns Google Generative AI embedding model."""
-    logger.info(f"Loading embedding model: {settings.EMBEDDING_MODEL}")
-    return GoogleGenerativeAIEmbeddings(
-        model=settings.EMBEDDING_MODEL,
-        google_api_key=settings.GOOGLE_API_KEY,
-        task_type="retrieval_document",
-    )
+def get_embeddings() -> GoogleGenerativeAIEmbeddings:
+    global _embeddings
+    if _embeddings is None:
+        logger.info(f"Loading embedding model: {settings.EMBEDDING_MODEL}")
+        _embeddings = GoogleGenerativeAIEmbeddings(
+            model=settings.EMBEDDING_MODEL,
+            google_api_key=settings.GOOGLE_API_KEY,
+        )
+    return _embeddings
