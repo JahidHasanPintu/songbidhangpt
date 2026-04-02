@@ -37,7 +37,7 @@ dist/
 backend/data/chroma_db/
 
 # PDFs (optional: ignore if private data)
-backend/data/pdfs/*.pdf
+# backend/data/pdfs/*.pdf
 
 # =========================
 # Testing / Coverage
