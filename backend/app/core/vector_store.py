@@ -2,7 +2,7 @@ import chromadb
 from langchain_chroma import Chroma
 from langchain.schema import Document
 from app.config import settings
-from app.core.embeddings import get_embeddings, embed_texts_debug
+from app.core.embeddings import get_embeddings
 from app.utils.logger import get_logger
 from typing import List, Tuple
 import os
@@ -63,8 +63,7 @@ class VectorStore:
 
             try:
                 # Test raw embedding on first chunk text before sending to Chroma
-                logger.info(f"    Testing raw embed on first chunk text...")
-                embed_texts_debug([batch[0].page_content[:200]])
+               
                 logger.info(f"    Raw embed test passed — proceeding with batch")
 
                 store.add_documents(batch)
