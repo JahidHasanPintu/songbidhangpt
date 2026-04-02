@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     # LLM
     GEMINI_MODEL: str = "gemini-1.5-flash"
-    EMBEDDING_MODEL: str = "models/text-embedding-004"
+    EMBEDDING_MODEL: str = "text-embedding-004"
     MAX_TOKENS: int = 2048
     TEMPERATURE: float = 0.1
 
