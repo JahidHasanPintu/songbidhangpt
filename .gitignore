@@ -1,0 +1,98 @@
+# =========================
+# OS & System files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Python (Backend)
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
+
+# Environment variables
+.env
+.env.*
+
+# Python build / packaging
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+
+# =========================
+# ChromaDB / Vector DB
+# =========================
+backend/data/chroma_db/
+
+# PDFs (optional: ignore if private data)
+backend/data/pdfs/*.pdf
+
+# =========================
+# Testing / Coverage
+# =========================
+.coverage
+htmlcov/
+.pytest_cache/
+
+# =========================
+# Node.js / Frontend
+# =========================
+node_modules/
+.next/
+out/
+dist/
+
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Next.js build
+# =========================
+frontend/.next/
+frontend/out/
+
+# =========================
+# Docker
+# =========================
+*.tar
+*.gz
+
+# =========================
+# IDEs & Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# GitHub / CI (optional)
+# =========================
+# Uncomment if needed
+# .github/
+
+# =========================
+# Misc
+# =========================
+*.sqlite3
+*.db
